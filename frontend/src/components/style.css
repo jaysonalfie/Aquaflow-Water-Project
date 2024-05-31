@@ -1,0 +1,410 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  outline: none;
+  text-decoration: none;
+  list-style: none;
+
+}
+
+.mainlayout{
+  display: flex;
+  flex-direction:column;
+  width: 100vw;
+  height: auto;
+}
+
+
+/* navbar component */
+.container {
+  width: 93vw;
+  margin: 0 auto;
+}
+header {
+  background: #fff;
+}
+header ::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.logo {
+  float: left;
+  padding: 10px 0;
+  height: 80px;
+  width: 80px;
+  border-radius: 25px;
+}
+
+nav {
+  float: right;
+  /* margin-right: 3rem; */
+}
+
+nav ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+nav li {
+  display: inline-block;
+  margin-left: 70px;
+  padding-top: 23px;
+  position: relative;
+}
+
+nav a {
+  color: black;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-size: 14px;
+}
+nav a :hover {
+  color: #000;
+}
+nav a::before {
+  content: "";
+  display: block;
+  height: 5px;
+
+  background-color: #3876f5;
+  position: absolute;
+  top: 0;
+  width: 0%;
+  transition: all ease-in-out 260ms;
+}
+
+nav a:hover::before {
+  width: 100%;
+}
+
+/* Home component */
+.section1 {
+  /* border: 10px solid firebrick;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    background: #3876F5;
+    outline: 2px solid lime;
+    gap: 2rem; */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 50px;
+  margin-left: 100px;
+}
+
+/* 
+.section1 > * {
+ flex:1;
+} */
+
+.heading {
+  font-size: 45px;
+  font-weight: 400;
+  padding-bottom: 30px;
+  line-height: 1.5;
+}
+.water {
+  font-weight: 400;
+  width: 64%;
+  line-height: 1.5;
+  font-size: 18px;
+}
+.btn {
+  margin-top: 20px;
+  padding: 15px 60px;
+  border-radius: 10vmax;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  background-color: #38eaff;
+  margin-right: 26px;
+}
+.btn2 {
+  margin-top: 20px;
+  margin-left: 25px;
+  padding: 15px 60px;
+  border-radius: 10vmax;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  transition-duration: 0.4s;
+}
+.btn2:hover {
+  background-color: #e7e7e7;
+  color: white;
+}
+.btn {
+  background-color: #3876f5;
+  color: #38eaff;
+}
+.deliveryman {
+  width: 90%;
+  border-radius: 25px;
+}
+
+/* section 2 */
+/* watercard */
+.aboutcont{
+  margin-block: 3em;
+}
+.section2 {
+  display: grid;
+  gap: 1em;
+
+  margin-top: 50px;
+  margin-left: 100px;
+}
+@media (min-width: 40rem) {
+  .section2 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.girlwater {
+  width: 566px;
+  border-radius: 25px;
+}
+.waterContainer {
+  /* height: 340px; */
+  width: 240px;
+  border-style: groove;
+  border-radius: 25px;
+  margin: 2px;
+  text-align: center;
+  border-color: #a9a9a9;
+}
+.bottle {
+  width: 90%;
+  height: 70%;
+}
+.watersec {
+  margin-top: 95px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+.header2 {
+  color: #da9e04;
+  font-size: 30px;
+  font-weight: 400px;
+  font-style: italic;
+}
+.lives {
+  font-size: 38px;
+  font-weight: 450px;
+  line-height: 1.5;
+}
+.waterdetails {
+  font-size: 16px;
+  margin-top: 10px;
+  margin-bottom: 40px;
+}
+.btn3 {
+  margin-top: 20px;
+  padding: 15px 60px;
+  border-radius: 10vmax;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  margin-right: 26px;
+  background-color: #3876f5;
+  color: #38eaff;
+}
+
+/* section3 */
+.section3 {
+  margin-top: 65px;
+  margin-left: 100px;
+}
+.header3 {
+  color: #da9e04;
+  font-size: 30px;
+  font-weight: 400px;
+  font-style: italic;
+}
+.lives2 {
+  font-size: 28px;
+  font-weight: 450px;
+  line-height: 1;
+}
+.serviceCards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  /* display: flex;
+    flex-direction: row;
+    gap: 3rem;
+    padding: 1rem; */
+}
+.servicecard {
+  width: 330px;
+  height: 430px;
+  border-style: groove;
+  border-radius: 20px;
+  border-color: #a9a9a9;
+  text-align: start;
+  padding: 1rem;
+}
+.servicecard img {
+  width: 80%;
+  margin-bottom: 8px;
+}
+.btn4 {
+  margin-top: 20px;
+  margin-left: 25px;
+  padding: 15px 60px;
+  border-radius: 10vmax;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  transition-duration: 0.4s;
+}
+.btn4:hover {
+  background-color: #e7e7e7;
+  color: white;
+}
+
+/* section 4 */
+.section4 {
+  margin-top: 65px;
+  margin-left: 100px;
+}
+/* infocard */
+.wrapper{
+  /* display: flex; */
+  gap: 1rem;
+  padding: 1.2rem;
+  margin: 0.8rem;
+  display:grid;
+  grid-template-columns: 1fr 1fr;  
+}
+.parent{
+  position: relative;
+  max-width: 250px;
+  margin: 0.2rem;
+}
+.child1{
+  width: 100%;
+  /* height: 200px; */
+  border-radius: 0.4rem;
+}
+.child1 img{
+  object-fit: fill;
+  aspect-ratio: 3/2;
+  max-width: 450px;
+}
+.child2{
+  /* position: absolute; */
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.3rem;
+  width: 100%;
+  margin: auto;
+  margin-left:5.5rem;
+  border-radius: 0.4rem;
+  box-shadow: grey 0.5rem;
+  background-color:aqua;
+  opacity: .7;
+}
+
+ /* .child2 .top, .child2 .bottom{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+}
+.child2 .middle{
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}  */
+.comments{
+  margin-left:10px;
+  
+}
+.btn5{
+  background-color: #3876f5;
+  color: #38eaff;
+  margin-right: 25px;
+  padding: 15px 30px;
+  border-radius: 100vh;
+}
+/* 
+section5 */
+
+/* footer */
+.footerr{
+  /* margin-top: 360px; */
+  background: #3876f5;
+  padding: 5px;
+}
+.footer{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap:1rem;
+  color: white;
+  bottom: 0;
+  left: 0;
+}
+.logo2{
+  padding: 10px 0;
+  height: 80px;
+  width: 80px;
+  border-radius: 25px;
+}
+.logo2span{
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.left{
+  padding-left: 22px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.left-details{
+  padding: 5px;
+  width: 100%;
+
+}
+.left-middle{
+  margin-top: 40px;
+  /* padding: 5px; */
+  display:flex;
+  flex-direction: column;
+  gap: .7em;
+ 
+}
+.left-middle  p{
+  display: flex;
+  flex-direction: row;
+  gap: .5em;
+  align-items:center   ;
+}
+.right{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  padding-right: 12px;
+  margin-top: 35px;
+}
+.right-middle ul{
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding:0;
+  list-style: none;
+
+}
+.right-end{
+  display: grid;
+  grid-template-rows: auto;
+}
+
+.right-middle a{
+  color: white;
+  text-decoration: none;
+}
