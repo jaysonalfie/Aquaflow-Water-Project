@@ -4,14 +4,18 @@ import '../about/style2.css'
 import { NavLink ,useNavigate } from "react-router-dom";
 
 const Login = () => {
+// state variables to handle the following states
   const [username,setUsername] = useState("");
   const [password,setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState("");
-
+ 
+  // hook to navigate different routes
   const navigate = useNavigate();
 
+// function to validate form inputs
   const validateForm = ()=>{
+  //checks is username and password are provided
     if(!username || !password){
       setError("USername and Password are required");
       return false;
@@ -20,17 +24,22 @@ const Login = () => {
     return true;
   }
   
+  //function to handle form submission
   const handleSubmit = async(event) =>{
+    //prevents default form submission behaviour
     event.preventDefault();
+    //validates the form to know if it is valid or not before continuing
     if(!validateForm()) return;
+    //loading state is set to true
     setLoading(true);
 
-
+    //preaparing form data 
     const formDetails = new URLSearchParams();
     formDetails.append("username", username);
     formDetails.append("password", password);
 
     try {
+      //sends POST requset with form data as request body to the server for authentication
       const response = await fetch ("http://localhost:8000/token", {
         method: "POST",
         headers : {
@@ -38,12 +47,14 @@ const Login = () => {
         },
         body: formDetails,
       });
-
+      //loading state is set to false
       setLoading(false);
 
       if(response.ok){
         const data = await response.json();
+        //stores token in local storage
         localStorage.setItem("token", data.access_token);
+        //loads this page if log in successful
         navigate("/about")
       } else {
         const errorData = await response.json();
