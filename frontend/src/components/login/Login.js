@@ -55,7 +55,7 @@ const Login = () => {
         //stores token in local storage
         localStorage.setItem("token", data.access_token);
         //loads this page if log in successful
-        navigate("/about")
+        navigate("/home")
       } else {
         const errorData = await response.json();
         setError(errorData.detail || "Authentication failed");

@@ -1,118 +1,126 @@
-import React from "react";
+import React, { useState } from "react";
 import logo from "../../images/logo2.GIF";
 import { NavLink } from "react-router-dom";
-import { useForm } from "react-hook-form";
 import "../about/style2.css";
 
 const Signup = () => {
-  // Destructuring the necessary functions and properties from the useForm hook
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-    reset,
-  } = useForm();
+  //creating states that are in the form component
+  const [email, setEmail] = useState(" ");
+  const [username, setUsername] = useState(" ");
+  const [password, setPassword] = useState(" ");
+  const [error, setError] = useState(" ");
+  const [success, setSuccess] = useState(false);
 
-  const onFormSubmit = (data) => {
-    console.log(data);
-    // Add logic to save user data or interact with backend API
-    reset(); // Reset form fields after successful submission
+  //function to validate the form inputs
+  const validateForm = () => {
+    if (!username || !password || !email) {
+      setError("Username, email and password are required");
+      return false;
+    }
+    setError("");
+    return true;
+  };
+
+  //function to handle the submit event
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (!validateForm()) return;
+
+    const formData = {
+      username,
+      email,
+      password,
+    };
+    //try-catch block
+    try {
+      const response = await fetch("http://localhost:8000/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      if (response.ok) {
+        //if registration is successful one can now proceed to the login page to log in
+        console.log("Registration successful");
+        setSuccess(true);
+      } else {
+        const errorData = await response.json();
+        setError(errorData.detail || "Registration failed");
+        setSuccess(false);
+      }
+    } catch (error) {
+      setError("An Error occured. Please try again later");
+      setSuccess(false);
+    }
   };
 
   return (
     <div className="signup_wrapper">
       <div>
         <div className="form-header">
-          <img src={logo} className="logo3" />
+          <img src={logo} className="logo3" alt="" />
           <h2>Sign Up</h2>
         </div>
       </div>
       <div className="signUp_form">
-        <form onSubmit={handleSubmit(onFormSubmit)}>
-        {/* Start of the form, onSubmit event calls the handleSubmit function from react-hook-form */}
-         {/* Email input field */}
+        <form onSubmit={handleSubmit}>
+          {/* Start of the form, onSubmit event calls the handleSubmit function from react-hook-form */}
+          {/* Email input field */}
           <div className="text">
-            <label>
-              Email
-              <span>
-                <input
-                // email validation rules
-                  type="text"
-                  {...register("email", { required: "Email is required." })}
-                />
-                {/* Displaying the error message if the email field is invalid */}
-                {errors.email && <small>{errors.email.message}</small>}
-              </span>
-            </label>
+            <label> Email</label>
+
+            <input
+              type="text"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
           </div>
           <div className="text">
-            <label>
-              Username
-              <span>
-                <input
-                  type="text"
-                  {...register("username", { required: "Username is required." })}
-                />
-                 {/* Displaying the error message if the username field is invalid */}
-                {errors.username && <small>{errors.username.message}</small>}
-              </span>
-            </label>
+            <label>Username</label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
           </div>
           <div>
-            <label>
-              Password
-              <span>
-                <input
-                  type="password"
-                  {...register("password", {
-                    required: "Password is required.",
-                    minLength: {
-                      value: 8,
-                      message: "Your password must contain at least 8 characters",
-                    },
-                  })}
-                />
-                 {/* Displaying the error message if the password field is invalid */}
-                {errors.password && <small>{errors.password.message}</small>}
-                <small className="passwordtxt">
-                  -Your password must contain at least 8 characters
-                </small>
-              </span>
-            </label>
+            <label>Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <small className="passwordtxt">
+              -Your password must contain at least 8 characters
+            </small>
           </div>
           <div>
-            <label>
-              Password Confirmation
-              <span>
-                <input
-                  type="password"
-                  {...register("passwordConfirm", {
-                    required: "Please confirm your password.",
-                    validate: (value) =>
-                      value === watch("password") || "Passwords don't match.",
-                  })}
-                />
-                 {/* Displaying the error message if the password confirmation field is invalid */}
-                {errors.passwordConfirm && (
-                  <small>{errors.passwordConfirm.message}</small>
-                )}
-                <small className="passwordtxt">
-                  -Enter the same password as before for verification
-                </small>
-              </span>
-            </label>
+            <label>Password Confirmation</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+
+            <small className="passwordtxt">
+              -Enter the same password as before for verification
+            </small>
           </div>
           <div className="buttondiv">
             <button type="submit" className="btn10">
               Sign Up
             </button>
+            {error && <p style={{ color: "red" }}>{error}</p>}
+            {success && (
+              <p style={{ color: "green" }}>Account created successfully</p>
+            )}
           </div>
           <div className="signdet">
             <p>
               Don't have an account?{" "}
               <span>
-                <NavLink to="/login">Sign In</NavLink>
+                <NavLink to="/">Sign In</NavLink>
               </span>
             </p>
           </div>

@@ -13,10 +13,11 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     //creating parent route as main layout will be in every page
   <Route path='/' element={<MainLayout/>}>
-    <Route index element={<HomePage/>}/>
+    <Route index element={<LoginPage/>}/>
+    <Route path="/home" element={<HomePage/>}/>
     <Route path="/about" element={<AboutPage/>}/>
     <Route path="/shop" element={<ShopsPage/>}/>
-    <Route path="/login" element={<LoginPage/>}/>
+   
     <Route path="/signup" element={<SignupPage/>}/>
     <Route path="*"  element={<ErrorPage/>}/>
   </Route>
