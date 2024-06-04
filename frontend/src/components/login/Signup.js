@@ -88,7 +88,7 @@ const Signup = () => {
             <label>Password</label>
             <input
               type="password"
-              value={password}
+              name={password}
               onChange={(e) => setPassword(e.target.value)}
             />
             <small className="passwordtxt">
@@ -99,7 +99,7 @@ const Signup = () => {
             <label>Password Confirmation</label>
             <input
               type="password"
-              value={password}
+              name={password}
               onChange={(e) => setPassword(e.target.value)}
             />
 
