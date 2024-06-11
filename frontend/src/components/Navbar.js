@@ -2,8 +2,12 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import "./style.css";
 import logo1 from "../images/aquaflowlogo.png";
+import { useContext } from "react";
+import { AuthContext } from "./AuthContext";
 
 const Navbar = () => {
+  const {isAuthenticated, logout} = useContext(AuthContext)
+
   return (
     <header>
       <div className="container">
@@ -33,6 +37,9 @@ const Navbar = () => {
             </li>
             <li>
               <i class="bx bx-cart"></i>
+            </li>
+            <li>
+              <button className="buttnav" onClick={logout}>Logout</button>
             </li>
           </ul>
         </nav>

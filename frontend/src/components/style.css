@@ -79,6 +79,11 @@ nav a::before {
 nav a:hover::before {
   width: 100%;
 }
+.buttnav{
+  background-color: #3876f5;
+  color: #38eaff;
+  padding: 5px 10px;
+}
 
 /* Home component */
 .section1 {

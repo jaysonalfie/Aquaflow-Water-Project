@@ -29,7 +29,9 @@ const router = createBrowserRouter(
 const App=()=> {
   
   return (
+    // Wrap the entire app with AuthProvider to provide authentication context to all components
     <AuthProvider>
+          {/* RouterProvider uses the created router to handle routing */}
       <RouterProvider router={router}/>
     </AuthProvider>
   )
