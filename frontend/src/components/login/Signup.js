@@ -5,16 +5,21 @@ import "../about/style2.css";
 
 const Signup = () => {
   //creating states that are in the form component
-  const [email, setEmail] = useState(" ");
-  const [username, setUsername] = useState(" ");
-  const [password, setPassword] = useState(" ");
-  const [error, setError] = useState(" ");
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [confirmPassword, setConfirmPassword]= useState("")
   const [success, setSuccess] = useState(false);
 
   //function to validate the form inputs
   const validateForm = () => {
     if (!username || !password || !email) {
       setError("Username, email and password are required");
+      return false;
+    }
+    if (password !== confirmPassword){
+      setError("Passwords do not match");
       return false;
     }
     setError("");
@@ -24,7 +29,9 @@ const Signup = () => {
   //function to handle the submit event
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (!validateForm()) return;
+    //validates form to know if it is valid or not before continuing
+    if (!validateForm()) 
+    return;
 
     const formData = {
       username,
@@ -50,7 +57,7 @@ const Signup = () => {
         setSuccess(false);
       }
     } catch (error) {
-      setError("An Error occured. Please try again later");
+      setError("An error occured. Please try again later");
       setSuccess(false);
     }
   };
@@ -59,7 +66,7 @@ const Signup = () => {
     <div className="signup_wrapper">
       <div>
         <div className="form-header">
-          <img src={logo} className="logo3" alt="" />
+          <img src={logo} className="logo3" alt="Logo" />
           <h2>Sign Up</h2>
         </div>
       </div>
@@ -99,8 +106,8 @@ const Signup = () => {
             <label>Password Confirmation</label>
             <input
               type="password"
-              name={password}
-              onChange={(e) => setPassword(e.target.value)}
+              name={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
             />
 
             <small className="passwordtxt">
@@ -111,10 +118,8 @@ const Signup = () => {
             <button type="submit" className="btn10">
               Sign Up
             </button>
-            {error && <p style={{ color: "red" }}>{error}</p>}
-            {success && (
-              <p style={{ color: "green" }}>Account created successfully</p>
-            )}
+            {error && <p style={{color:"red"}}>{error}</p>}
+           {success && (<p style={{color:'green'}}>Account created successfully</p>)}
           </div>
           <div className="signdet">
             <p>
