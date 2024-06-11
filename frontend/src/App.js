@@ -7,16 +7,19 @@ import ShopsPage from "./pages/ShopsPage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import ErrorPage from "./ErrorPage";
+import ProtectedRoute from "./components/ProtectedRoute";
+import { AuthProvider } from "./components/AuthContext";
 
 //creating react router for the elements in the application
 const router = createBrowserRouter(
   createRoutesFromElements(
     //creating parent route as main layout will be in every page
-  <Route path='/' element={<MainLayout/>}>
+    <Route path='/' element={<MainLayout/>}>
     <Route index element={<LoginPage/>}/>
-    <Route path="/home" element={<HomePage/>}/>
-    <Route path="/about" element={<AboutPage/>}/>
-    <Route path="/shop" element={<ShopsPage/>}/>
+    <Route path="/home" element={<ProtectedRoute><HomePage/></ProtectedRoute>} />
+    <Route path="/about" element={<ProtectedRoute><AboutPage/></ProtectedRoute>}/>
+    <Route path="/shop" element={<ProtectedRoute><ShopsPage/></ProtectedRoute>}/>
+    <Route path="/shop" element={<ProtectedRoute><ShopsPage/></ProtectedRoute>}/>
    
     <Route path="/signup" element={<SignupPage/>}/>
     <Route path="*"  element={<ErrorPage/>}/>
@@ -25,7 +28,11 @@ const router = createBrowserRouter(
 )
 const App=()=> {
   
-  return <RouterProvider router={router}/>
+  return (
+    <AuthProvider>
+      <RouterProvider router={router}/>
+    </AuthProvider>
+  )
   
 }
 

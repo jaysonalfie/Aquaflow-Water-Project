@@ -1,72 +1,33 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import logo from "../../images/logo2.GIF";
 import '../about/style2.css'
-import { NavLink ,useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import {AuthContext} from '../AuthContext'
 
 const Login = () => {
-// state variables to handle the following states
-  const [username,setUsername] = useState("");
-  const [password,setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState("");
- 
-  // hook to navigate different routes
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const { login, loading, error } = useContext(AuthContext);
   const navigate = useNavigate();
 
-// function to validate form inputs
-  const validateForm = ()=>{
-  //checks is username and password are provided
-    if(!username || !password){
-      setError("USername and Password are required");
+  const validateForm = () => {
+    if (!username || !password) {
       return false;
     }
-    setError("");
     return true;
   }
-  
-  //function to handle form submission
-  const handleSubmit = async(event) =>{
-    //prevents default form submission behaviour
-    event.preventDefault();
-    //validates the form to know if it is valid or not before continuing
-    if(!validateForm()) return;
-    //loading state is set to true
-    setLoading(true);
 
-    //preaparing form data 
-    const formDetails = new URLSearchParams();
-    formDetails.append("username", username);
-    formDetails.append("password", password);
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (!validateForm()) return;
 
     try {
-      //sends POST requset with form data as request body to the server for authentication
-      const response = await fetch ("http://localhost:8000/token", {
-        method: "POST",
-        headers : {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: formDetails,
-      });
-      //loading state is set to false
-      setLoading(false);
-
-      if(response.ok){
-        const data = await response.json();
-        //stores token in local storage
-        localStorage.setItem("token", data.access_token);
-        //loads this page if log in successful
-        navigate("/home")
-      } else {
-        const errorData = await response.json();
-        setError(errorData.detail || "Authentication failed");
-      }
-
-    } catch (error){
-      setLoading(false);
-      setError("An error occured. Please try again later")
+      await login(username, password);
+      navigate("/home"); // Navigate to the desired route after successful authentication
+    } catch (error) {
+      console.log('Login error:', error);
     }
   };
-
 
   return (
     <div className="form_wrapper">
@@ -81,12 +42,11 @@ const Login = () => {
             <label>
               Username
               <span>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                 />
-    
+                />
               </span>
             </label>
           </div>
@@ -95,28 +55,31 @@ const Login = () => {
               Password
               <span>
                 <input
-                  type="password" 
-                  name={password}
+                  type="password"
+                  value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                 />
+                />
               </span>
             </label>
           </div>
           <div className="buttondiv">
             <button type="submit" className="btn10" disabled={loading}>
-            {loading ? "logging in..." : "Login"}</button>
+              {loading ? "logging in..." : "Login"}
+            </button>
           </div>
-          {error && <p style={{color : "red"}}>{error}</p>}
+          {error && <p style={{ color: "red" }}>{error}</p>}
           <div className="signdet">
-            <p>Don't have an account?<span>
-              <NavLink to='/signup'>Sign Up</NavLink>
-            </span></p>
+            <p>
+              Don't have an account?
+              <span>
+                <NavLink to='/signup'>Sign Up</NavLink>
+              </span>
+            </p>
           </div>
         </form>
       </div>
     </div>
   );
-  
 };
 
 export default Login;
