@@ -33,10 +33,10 @@ const Navbar = () => {
               <NavLink to="/contacts">Contacts</NavLink>
             </li>
             <li>
-              <i class="bx bx-search-alt-2"></i>
+              <i className="bx bx-search-alt-2"></i>
             </li>
             <li>
-              <i class="bx bx-cart"></i>
+              <i className="bx bx-cart"></i>
             </li>
             <li>
               <button className="buttnav" onClick={logout}>Logout</button>

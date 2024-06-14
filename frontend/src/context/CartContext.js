@@ -5,7 +5,7 @@ export const CartContext = createContext();
  
 export const CartProvider = ({children}) => {
     const [cartItems, setCartItems] = useState(
-        localStorage.getitem("cartItems")
+        localStorage.getItem("cartItems")
         ? JSON.parse(localStorage.getItem("cartItems"))
         :[]
 
@@ -33,4 +33,71 @@ export const CartProvider = ({children}) => {
             setCartItems([...cartItems , {...item, quantity:1}]);
         }
     }
+
+    //function to remove items from the cart
+    const removeFromCart = (item) => {
+        const isItemInCart = cartItems.find((cartItem)=> cartItem.id === item.id);
+
+        if (isItemInCart.quantity === 1){
+            //if the quantity of the item is 1, remove the item from the cart
+            setCartItems(cartItems.filter((cartItem)=> cartItem.id !== item.id));
+        } else {
+            setCartItems(
+                cartItems.map((cartItem)=>
+                cartItem.id === item.id
+                //if the quantity of the item is greater than 1, decrease the quantity of the item
+               ?{...cartItem, quantity: cartItem.quantity - 1}
+              : cartItem
+                )
+            )
+        }
+    }
+
+    //function to clear the cart
+    //it sets the cart to an empty array
+    const clearCart = () => {
+        setCartItems([]);
+    };
+
+    //function to get cart total
+    //use of the reduce method which executes a reducer function tha results to a single output
+    const getCartTotal = ()=>{
+        return cartItems.reduce(
+            (total, item) => total + item.price * item.quantity,
+            0
+        )//calculate the total price of the items in the cart
+    };
+
+    //getting items from browser
+    //JSON.parse converts items yo an object
+    useEffect(()=> {
+        const cartItems = localStorage.getItem("cartItems");
+        if(cartItems){
+            setCartItems(JSON.parse(cartItems));
+        }
+
+    }, []);
+
+    //persisting cart state in browser-updates local storage whenever the cartItems state changes
+    //setItem method sets value of specified localstorage item
+    //JSON.stringify converts object into a string
+    useEffect(()=>{
+        localStorage.setItem("cartItems", JSON.stringify(cartItems));
+
+    }, [cartItems]);
+
+    return (
+        //wraps the children in the CartContext.provider
+        <CartContext.Provider
+         value={{
+            cartItems,
+            addToCart,
+            removeFromCart,
+            clearCart,
+            getCartTotal,
+         }}
+         >
+            {children}
+         </CartContext.Provider>
+    )
 }
