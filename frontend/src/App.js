@@ -9,21 +9,27 @@ import SignupPage from "./pages/SignupPage";
 import ErrorPage from "./ErrorPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./components/AuthContext";
+import DispensorShop from "./Dispensor/DispensorShop";
 
 //creating react router for the elements in the application
 const router = createBrowserRouter(
   createRoutesFromElements(
     //creating parent route as main layout will be in every page
-    <Route path='/' element={<MainLayout/>}>
+    <Route>
+    <Route path="/dispensorshop" element={<DispensorShop/>}/>
+      <Route path='/' element={<MainLayout/>}>
     <Route index element={<LoginPage/>}/>
     <Route path="/home" element={<ProtectedRoute><HomePage/></ProtectedRoute>} />
     <Route path="/about" element={<ProtectedRoute><AboutPage/></ProtectedRoute>}/>
     <Route path="/shop" element={<ProtectedRoute><ShopsPage/></ProtectedRoute>}/>
     <Route path="/shop" element={<ProtectedRoute><ShopsPage/></ProtectedRoute>}/>
+    
    
     <Route path="/signup" element={<SignupPage/>}/>
     <Route path="*"  element={<ErrorPage/>}/>
   </Route>
+    </Route>
+    
 )
 )
 const App=()=> {
