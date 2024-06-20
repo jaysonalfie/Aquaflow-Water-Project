@@ -1,4 +1,4 @@
-import React from 'react'
+import React , {useCallback, useEffect, useRef} from 'react'
 import { Link } from 'react-router-dom'
 import Logo from "../images/aquaflowlogo.png"
 import { FaSignOutAlt,  FaCog,  FaUserFriends ,FaMoneyBillWave } from "react-icons/fa";
@@ -7,6 +7,36 @@ import './menu.css'
 
 
 const DisMenu = () => {
+ 
+    //this hook allows creation a mutable reference which allows manipulation without re-rendering of the component
+    const mainMenuRef = useRef(null);
+
+
+     //function responsible for assigning the active class
+     const changeActive = useCallback((event)=> {
+        const mainMenuLi = mainMenuRef.current?.querySelectorAll('li');
+         if (mainMenuLi){
+            mainMenuLi.forEach((li, index)=> li.classList.remove('active'));
+            event.currentTarget.classList.add('active')
+
+         }
+
+     }, []); 
+     
+     useEffect(()=>{
+        const mainMenuLi = mainMenuRef.current?.querySelectorAll('li');
+        if (mainMenuLi){
+            mainMenuLi.forEach((li,index)=> li.addEventListener('click', changeActive));
+        }
+
+        return () => {
+            if(mainMenuLi){
+                mainMenuLi.forEach((li,index)=> li.removeEventListener('click', changeActive));
+        }
+            }
+        
+     }, [changeActive]);
+     
   return(
     <menu>
         <img src={Logo}alt=""/>
