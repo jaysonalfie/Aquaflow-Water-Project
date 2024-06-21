@@ -11,6 +11,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./components/AuthContext";
 import DispensorShop from "./Dispensor/DispensorShop";
 
+
 //creating react router for the elements in the application
 const router = createBrowserRouter(
   createRoutesFromElements(

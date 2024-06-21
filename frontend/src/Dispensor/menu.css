@@ -1,11 +1,14 @@
 menu {
-    width: 250px;
-    /* background: #19162c; */
+    width: 210px;
+    background:white;
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     border: 1px solid gray;
     border-radius: .5em;
+    padding: 10px;
+    
 }
 
 menu img{
@@ -31,7 +34,6 @@ menu ul{
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 85px;
 }
 
 menu ul li {
@@ -61,6 +63,10 @@ menu ul li a:before{
     border-radius: 50%;
 }
 
+menu ul li:hover a{
+    color: #b1147d;
+}
+
 menu ul li:hover a::before {
     width: 20px;
     transition:all 0.3s;
@@ -70,6 +76,12 @@ menu ul li.active a::before{
     color:#3876f5;
     transition :all 0.3s;
 }
+
+.bottomMenu{
+    margin-top: 75px;
+}
+
+
 
 @media only screen and (max-width : 530px){
     menu{
