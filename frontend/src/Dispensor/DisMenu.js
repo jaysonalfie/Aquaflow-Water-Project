@@ -9,6 +9,7 @@ import './menu.css'
 const DisMenu = () => {
  
     //this hook allows creation a mutable reference which allows manipulation without re-rendering of the component
+    //clicking on an item sets it as active, visually differentiating it from other items.
     const mainMenuRef = useRef(null);
 
 
@@ -23,12 +24,17 @@ const DisMenu = () => {
 
      }, []); 
      
+
+     //hook to add event listeners after the component had been rendered
      useEffect(()=>{
+
         const mainMenuLi = mainMenuRef.current?.querySelectorAll('li');
         if (mainMenuLi){
+            //adding click event listeners to each li element
             mainMenuLi.forEach((li,index)=> li.addEventListener('click', changeActive));
         }
-
+        
+        //clean up function to remove event listeners when component unmounts
         return () => {
             if(mainMenuLi){
                 mainMenuLi.forEach((li,index)=> li.removeEventListener('click', changeActive));
@@ -86,6 +92,7 @@ const DisMenu = () => {
   
 }
 
+//creating an Icon component that receives an 'icon' prop
 const Icon = ({icon})=> (
     <li>
         <Link to='#'>{icon}</Link>
