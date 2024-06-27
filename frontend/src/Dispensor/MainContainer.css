@@ -1,0 +1,25 @@
+.mainContainer {
+    width: 100%;
+    height: calc(100vh - 45px);
+    display: flex;
+    flex-direction: column;
+    padding-top: 15px;
+}
+
+.mainContainer .mainContainerTop {
+    height: 40%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    margin: 15px 0;
+
+}
+.mainContainer .mainContainerTop .main-card{
+   display: flex;
+   flex-direction: column;
+   justify-content: space-around;
+   padding: 8px 15px;
+   border: 1px solid black;
+   border-radius: 5px;
+}
+
