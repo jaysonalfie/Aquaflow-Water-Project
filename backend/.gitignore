@@ -24,3 +24,6 @@ __init__.py
 # Ignore system-specific files
 .DS_Store
 Thumbs.db
+
+#ignore the requirements file
+requirements.txt

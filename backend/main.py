@@ -1,13 +1,14 @@
-from fastapi import FastAPI, Depends, HTTPException,status
+from fastapi import FastAPI, Depends, HTTPException,status, Form
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from datetime import datetime, timedelta, timezone
 from passlib.context import CryptContext
-from models import User
+from models import Product, User
 from database import SessionLocal, engine
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
+import shutil
 
 app = FastAPI()
 
@@ -53,6 +54,25 @@ class UserCreate(BaseModel):
     username:str
     password:str
 
+#data validation for products
+class ProductCreate(BaseModel):
+    name:str
+    price:float
+    image_path: str
+
+
+#function to create_products
+def create_product(db:Session, product:ProductCreate):
+    db_product = Product(**product.dict())
+    db.add(db_product)
+    db.commit()
+    db.refresh(db_product)
+    return db_product
+
+#retrieval of products from database
+def get_products(db: Session, skip: int =0, limit:int = 100):
+    return db.query(Product).offset(skip).limit(limit).all()
+
 #function to get user by username
 def get_user_by_username(db:Session, username:str):
     return db.query(User).filter(User.username ==username).first()
@@ -67,6 +87,30 @@ def create_user(db:Session, user: UserCreate):
     db.add(db_user)
     db.commit()
     return "User created"
+
+
+#endpoint to create products in the db
+@app.post("/products", response_model=ProductCreate)
+def create_product_endpoint(
+    name: str = Form(...),
+    price: float = Form(...),
+    image: UploadFile = File(...),
+    db: Session = Depends(get_db)
+):
+    
+    #saving the uploaded file
+    file_location = f"uploads/{image.filename}"
+    with open(file_location, "wb+") as file_object:
+        shutil.copyfileobj(image.file, file_object)
+
+    product = ProductCreate(name=name, price= price, image_path= file_location)
+    return create_product(db=db, product=product)
+
+#endpoint to get products from db
+@app.get("/products")
+def read_products(skip:int = 0, limit:int = 100, db: Session = Depends(get_db)):
+    products = get_products(db, skip=skip, limit=limit)
+    return products
 
 #endpoint to register a new user
 @app.post("/register")
