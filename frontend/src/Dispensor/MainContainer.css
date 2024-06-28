@@ -23,3 +23,18 @@
    border-radius: 5px;
 }
 
+.main-card:first-child {
+    background-color: #FD9C2B;
+}
+.main-card:nth-child(2){
+    background-color: #DA71FF;
+}
+.main-card:nth-child(3){
+    background-color: #74FB68;
+}
+
+/* Product form */
+.mainContainer .mainContainerBottom {
+    height: 55%;
+}
+
