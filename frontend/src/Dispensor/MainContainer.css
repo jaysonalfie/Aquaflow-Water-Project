@@ -38,3 +38,30 @@
     height: 55%;
 }
 
+.mainContainer .mainContainerBottom .product-form{
+     width: 420px;
+    /* margin-inline: auto;
+    margin-block: 2em; */
+    border: 1px solid gray;
+    padding: 8px 15px;
+    box-sizing: border-box;
+    border-radius: .5em;
+}
+.mainContainer .mainContainerBottom .product-form label{
+    display: flex;
+    font-size: 20px;
+    gap: auto;
+    flex-direction: column;
+}
+
+.mainContainer .mainContainerBottom .product-form .product-form-input{
+ margin-bottom: 15px;
+}
+.mainContainer .mainContainerBottom .product-form .product-form-btn{
+    width: 50%;
+    height: 40px;
+    border-radius: 8px;
+    background: #3876F5;
+    color: white;
+    font-size: 18px; 
+}
