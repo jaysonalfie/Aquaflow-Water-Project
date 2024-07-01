@@ -5,20 +5,24 @@ import { BsFillArchiveFill, BsCashStack, BsWallet2 } from "react-icons/bs";
 
 const MainContainer = () => {
 
- //initialize state to handle form inputs
+ //initialize state to handle form inputs and selected image
     const [inputValue, setInputValue] = useState('')
     const [selectedImage, setSelectedImage]= useState('')
     const [inputName, setInputName] = useState('')
 
+    //function to handle input name change
     const handleNameChange = (event) =>{
       setInputName(event.target.value)
 
     }
 
+    
+    //function to handle input value change
     const handleChange = (event) =>{
       setInputValue(event.target.value);
     }
 
+     //function to handle the image file selection
     const handleImageChange = (event) =>{
       const file = event.target.files[0]
       if (file) {
@@ -28,12 +32,13 @@ const MainContainer = () => {
       }
 
     }
+
     //function to handle submission
     const handleSubmit = useCallback(async (event)=> {
       event.preventDefault();
       console.log('Form Submitted');
 
-
+    //creatin FormData object to send form data including image
       const formData = new FormData();
       formData.append('name', inputName)
       formData.append('price', inputValue);
@@ -43,6 +48,8 @@ const MainContainer = () => {
 
 
       try {
+
+        //sending POST request to add product to server
         const response = await fetch ('http://localhost:8000/products/', {
           method: 'POST',
           body: formData,
@@ -51,7 +58,8 @@ const MainContainer = () => {
         if(!response.ok){
           throw new Error('Network response was not ok');
         }
-
+         
+        //Parsing the response as JSON
         const result = await response.json();
         console.log('Product added', result);
 

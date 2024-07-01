@@ -2,32 +2,28 @@ import React from "react";
 
 import "../about/style2.css";
 
-const Card = (props) => {
-
-  const {shopsImage, productImage,productInfo} = props;
-
-//passing down props from the parent down to the child which is the Card
-
+const Card =({shopsImage, productImage, productInfo, price, shopName = "RubySafe"})=>{
   return (
     <div className="Card_wrapper">
       <div className="shophead">
-        <img src={props.shopsImage} className="shoplogo" />
+        <img src={shopsImage} className="shoplogo" alt="shop logo" />
         <span className="shop_span">
-          <p>RubySafe</p>
-          <i class="bx bx-heart"></i>
+          <p>{shopName}</p>
+          <i className="bx bx-heart"></i>
         </span>
       </div>
       <div className="shopproduct">
-        <img src={props.productImage} />
+        <img src={productImage} alt="product pic" />
         <span>
           <div className="productspan">
             <p>{productInfo}</p>
+            <p>Price: Ksh{price}</p>
             <div>
-              <i class="bx bxs-star"></i>
-              <i class="bx bxs-star"></i>
-              <i class="bx bxs-star"></i>
-              <i class="bx bxs-star"></i>
-              <i class="bx bx-star"></i>
+              <i className="bx bxs-star"></i>
+              <i className="bx bxs-star"></i>
+              <i className="bx bxs-star"></i>
+              <i className="bx bxs-star"></i>
+              <i className="bx bx-star"></i>
             </div>
           </div>
         </span>
@@ -37,6 +33,8 @@ const Card = (props) => {
       </div>
     </div>
   );
-};
+} 
+
+ 
 
 export default Card;
