@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException,status, Form
+from fastapi import FastAPI, Depends, HTTPException,status, Form , File , UploadFile
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
@@ -63,13 +63,18 @@ class ProductCreate(BaseModel):
 
 #function to create_products
 def create_product(db:Session, product:ProductCreate):
+    #converting  the ProductCreate instance to a dict and unpakin it as a keyword argument
     db_product = Product(**product.dict())
+    #adding new product instance to the db
     db.add(db_product)
+    #commiting the transaction to save the new product
     db.commit()
     db.refresh(db_product)
+    #returning newly created product instance
     return db_product
 
 #retrieval of products from database
+#creating query for the product model and putting restrictions on the amount of records to skip and also to show
 def get_products(db: Session, skip: int =0, limit:int = 100):
     return db.query(Product).offset(skip).limit(limit).all()
 
