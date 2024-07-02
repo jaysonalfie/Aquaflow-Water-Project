@@ -1,8 +1,11 @@
 import React from "react";
 
 import "../about/style2.css";
+import Person1 from "../../images/person 7.GIF";
 
-const Card =({shopsImage, productImage, productInfo, price, shopName = "RubySafe"})=>{
+
+//definition of Card component with destructured props
+const Card =({shopsImage  = Person1, productImage, productInfo, price, shopName = "RubySafe"})=>{
   return (
     <div className="Card_wrapper">
       <div className="shophead">
