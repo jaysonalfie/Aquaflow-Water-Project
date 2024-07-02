@@ -8,9 +8,14 @@ from models import Product, User
 from database import SessionLocal, engine
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 import shutil
+import os
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
+
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 #The JWT secret and algorithm
 SECRET_KEY = "691e3a14e6a0bb3228b233b5bb2b5743efff3faa82cd64b8eb17f345aabe8c3a"
@@ -95,7 +100,7 @@ def create_user(db:Session, user: UserCreate):
 
 
 #endpoint to create products in the db
-@app.post("/products", response_model=ProductCreate)
+@app.post("/products/", response_model=ProductCreate)
 def create_product_endpoint(
     name: str = Form(...),
     price: float = Form(...),
@@ -112,10 +117,30 @@ def create_product_endpoint(
     return create_product(db=db, product=product)
 
 #endpoint to get products from db
-@app.get("/products")
+@app.get("/products/")
 def read_products(skip:int = 0, limit:int = 100, db: Session = Depends(get_db)):
     products = get_products(db, skip=skip, limit=limit)
+    for product in products:
+        product.image_url = f"/products/{product.id}/image"
     return products
+
+#endpoint to serve the images
+@app.get("/products/{product_id}/image")
+def get_product_image(product_id: int, db: Session = Depends(get_db)):
+    product = db.query(Product).filter(Product.id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    
+    if not product.image_path:
+        raise HTTPException(status_code =4004, detail ="Image path not found")
+    
+    full_path = os.path.join(os.getcwd(), product.image_path)
+
+    if not os.path.exists(full_path):
+        raise HTTPException(status_code=404, detail="image file not found")
+    
+    return FileResponse(full_path)
+
 
 #endpoint to register a new user
 @app.post("/register")
