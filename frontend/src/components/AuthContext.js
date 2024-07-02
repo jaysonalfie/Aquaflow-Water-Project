@@ -1,4 +1,4 @@
-import React , {createContext, useState} from 'react'
+import React , {createContext, useState, useEffect} from 'react'
 
 
 //a context object that will provide and consume authentication related data
@@ -8,15 +8,24 @@ export  const AuthContext = createContext();
 //manages authentication state
  export const AuthProvider = ({children}) =>{
   //state variables to manage authentication status, user infor , loading state and error messages
-   const [isAuthenticated, setIsAuthenticated] = useState(false)  
+   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'))  
    const [user, setUser] = useState(null)  
    const [loading, setLoading] = useState(false)  
    const [error, setError] = useState("");
 
+    //hook to read token from localStorage on initialization and verify it
+   useEffect (()=>{
+    const token = localStorage.getItem('token');
+    if (token){
+      //optionally verify token with the backend here if needed
+      setIsAuthenticated(true)
+      //fetch and set user data from the backend if needed
+    }
+   }, [])
 
    //function to handle user login
    const login = async (username, password) =>{
-    //seeting load state to tre while login request is being processed
+    //setting load state to true while login request is being processed
     setLoading(true);
     setError('');
     //preparing login details to be sent to the server
