@@ -15,6 +15,7 @@ import Sidebar from './shop/Sidebar';
 import Menu from './shop/Menu';
 import FilterCard from './shop/FilterCard';
 import TagFilter from './shop/TagFilter';
+import { CartContext } from '../context/CartContext';
 
 const shopImages = [Person1]
 

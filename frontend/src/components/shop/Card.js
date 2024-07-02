@@ -1,11 +1,23 @@
-import React from "react";
-
+import React , {useContext} from "react";
+import { CartContext } from "../../context/CartContext";
 import "../about/style2.css";
 import Person1 from "../../images/person 7.GIF";
 
 
 //definition of Card component with destructured props
-const Card =({shopsImage  = Person1, productImage, productInfo, price, shopName = "RubySafe"})=>{
+const Card =({id, shopsImage  = Person1, productImage, productInfo, price, shopName = "RubySafe"})=>{
+ const {addToCart} = useContext(CartContext)
+
+  const handleAddToCart = () =>{
+    addToCart({
+      id,
+      name: productInfo,
+      price,
+      image: productImage,
+      shopName
+    })
+
+  }
   return (
     <div className="Card_wrapper">
       <div className="shophead">
@@ -31,7 +43,7 @@ const Card =({shopsImage  = Person1, productImage, productInfo, price, shopName 
           </div>
         </span>
         <div>
-          <button className="btn7">View Product</button>
+          <button className="btn7" onClick={handleAddToCart}>Add to Cart</button>
         </div>
       </div>
     </div>
