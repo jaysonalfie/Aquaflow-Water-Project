@@ -8,6 +8,8 @@ import Person1 from "../../images/person 7.GIF";
 const Card =({id, shopsImage  = Person1, productImage, productInfo, price, shopName = "RubySafe"})=>{
  const {addToCart} = useContext(CartContext)
 
+
+ //function to enable the product to be added to the cart.
   const handleAddToCart = () =>{
     addToCart({
       id,

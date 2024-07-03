@@ -14,9 +14,17 @@ export const CartProvider = ({children}) => {
 
     //function to add to cart
     const addToCart = (item) => {
+        console.log('adding item to cart', item)
+
+        // if (!item || item.id === undefined){
+        //     console.error('Cannot add item to cart : Invalid item or mission ID', item);
+        //     return;
+        // }
+
+
         //checks if item is already in the cart
         const isItemInCart = cartItems.find((cartItem) => cartItem.id === item.id);
-
+         console.log('item is already in cart', isItemInCart)
         if (isItemInCart){
             setCartItems(
                 cartItems.map(

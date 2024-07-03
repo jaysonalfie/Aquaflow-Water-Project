@@ -1,4 +1,4 @@
-import React, { useState , useEffect} from 'react'
+import React, { useState , useEffect, useContext} from 'react'
 import './about/style2.css'
 import Card from './shop/Card'
 import Person1 from "../images/person 7.GIF";
@@ -16,6 +16,7 @@ import Menu from './shop/Menu';
 import FilterCard from './shop/FilterCard';
 import TagFilter from './shop/TagFilter';
 import { CartContext } from '../context/CartContext';
+import Cart from './modals/Cart'
 
 const shopImages = [Person1]
 
@@ -26,6 +27,9 @@ const Shop = (props) => {
    const [products, setProducts] = useState([])
    const [isLoading, setIsLoading]=useState(true)
    const [error, setError] = useState(null)
+
+   const [showCart, setShowCart] = useState(false);
+   const {cartItems} = useContext(CartContext)
 
   //Hook to fetch products when the component mounts
    useEffect(()=>{
@@ -65,10 +69,19 @@ const Shop = (props) => {
     //chunking product arrays into columns
      const productColumns = chunkArray(products, 3);
    //all the components that are in the shopsPage
+
+   //function to toggleCart
+
+   const toggleCart =() =>{
+    setShowCart(!showCart);
+   }
+
+   
    return (
       <div className='shop_wrapper container'>
         <div>
           Shops
+          
         </div>
         <div className='menu_products'>
           <div className='shopfilters'>
@@ -79,6 +92,10 @@ const Shop = (props) => {
           <div className='right-bar'>
             <div className='shopMenu'>
               <Menu/>
+              <button onClick={toggleCart} className='cart-button'>
+            View Cart ({cartItems.length})
+          </button>
+          <Cart showModal={showCart} toggle={toggleCart}/>
             </div>
             {/*Conditionally renedering content based on loading and error states */}
             {isLoading ? (
