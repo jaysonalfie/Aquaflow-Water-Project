@@ -1,6 +1,7 @@
 //CartContext.js
 import React, {createContext, useState, useEffect} from "react";
 
+//creatin component to share data etween components
 export const CartContext = createContext();
  
 export const CartProvider = ({children}) => {
@@ -40,6 +41,8 @@ export const CartProvider = ({children}) => {
             //if the item is not in the cart, add the item to the cart
             setCartItems([...cartItems , {...item, quantity:1}]);
         }
+        
+        console.log('CartContext: Updates cart items:', cartItems)
     }
 
     //function to remove items from the cart

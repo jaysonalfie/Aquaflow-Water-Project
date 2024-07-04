@@ -56,7 +56,7 @@
 }
 
 .quality-controls button {
-    background-color: #f0f0f0;
+    background-color:  #3876f5;
     border: none;
     padding: 5px 15px;
     cursor: pointer;
@@ -72,10 +72,11 @@
 }
 
 .cart-summary button {
-    background-color: #ff4d4d;
+    background-color:  #3876f5;
     color: white;
     border: none;
     padding: 10px 15px;
     cursor: pointer;
     margin-top: 10px;
+    border-radius: .5rem;
 }

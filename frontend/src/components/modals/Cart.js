@@ -1,6 +1,7 @@
 import { useContext } from 'react'
 import './Cart.css'
 import { CartContext } from '../../context/CartContext'
+import PropTypes from 'prop-types'
 
 export default function Cart({showModal, toggle}) {
     // accessing the CartContext
@@ -11,8 +12,8 @@ export default function Cart({showModal, toggle}) {
         return null;
     }
 
-    console.log('Cart Items:', cartItems);
-    console.log('Cart Item IDs:', cartItems.map(item => item.id));
+    // console.log('Cart Items:', cartItems);
+    // console.log('Cart Item IDs:', cartItems.map(item => item.id));
 
     return (
         <div className='cart-modal'>
@@ -27,7 +28,8 @@ export default function Cart({showModal, toggle}) {
                     <>
                         {cartItems.map((item, index) => (
                         <div key={item.id || index} className='cart-item'>
-                            <img src={`http://localhost:8000/${item.image_url}`} alt={item.name} className='cart-item-image'/>
+                         {/**Passed the image_url directly so as to solve the bug of the image displaying on the cart */}
+                            <img src={item.image_url} alt={item.name} className='cart-item-image'/>
                                 
                                 <div className='cart-item-details'>
                                     <h3>{item.name}</h3>
@@ -49,4 +51,9 @@ export default function Cart({showModal, toggle}) {
             </div>
         </div>
     )
+}
+
+Cart.propTypes ={
+    showModal: PropTypes.bool,
+    toggle: PropTypes.func
 }

@@ -110,6 +110,8 @@ const Shop = (props) => {
                     {column.map((product, index) => (
                       <Card
                         key={product.id}
+                        // passed id to ensure unique identification of product from the backend to frontend 
+                        id={product.id}
                         shopsImage={shopImages[index % shopImages.length]}
                         productImage={product.image_url ? `http://localhost:8000${product.image_url}`: "/path/to/default/product/image.jpg" }
                         productInfo={product.name || "unknown Product"}

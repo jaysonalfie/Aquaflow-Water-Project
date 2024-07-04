@@ -10,16 +10,23 @@ const Card =({id, shopsImage  = Person1, productImage, productInfo, price, shopN
 
 
  //function to enable the product to be added to the cart.
-  const handleAddToCart = () =>{
-    addToCart({
-      id,
-      name: productInfo,
-      price,
-      image: productImage,
-      shopName
-    })
+ const handleAddToCart = () => {
+  console.log('Adding to cart:', {
+    id,
+    name: productInfo,
+    price,
+    image_url: productImage,
+    shopName
+  });
 
-  }
+  addToCart({
+    id,
+    name: productInfo,
+    price,
+    image_url: productImage,
+    shopName
+  });
+};
   return (
     <div className="Card_wrapper">
       <div className="shophead">
