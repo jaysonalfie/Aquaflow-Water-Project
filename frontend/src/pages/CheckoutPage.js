@@ -16,32 +16,77 @@ const CheckoutPage = () => {
 
   
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   if (isFormValid) {
+  //     try {
+  //       const response = await fetch('http://localhost:8000/initiate-payment', {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //         body: JSON.stringify({
+  //           user_id: 17,
+  //           amount: getCartTotal(),
+  //           phone: phoneNumber,
+  //         }),
+  //       });
+  //       const data = await response.json();
+  //       setTransactionId(data.transactionId);
+  //       setIsSubmitted(true);
+  //       setName('');
+  //       setPhoneNumber('');
+  //     } catch (error) {
+  //       console.error('Error initiating payment:', error);
+  //       setError('Failed to initiate payment. Please try again.');
+  //     }
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
+    //prevents the default form behaviour
     e.preventDefault();
+    //checking for form validity
     if (isFormValid) {
       try {
+        //sends a POST request to the server to initiate payment
         const response = await fetch('http://localhost:8000/initiate-payment', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            amount: getCartTotal(),
-            phone: phoneNumber,
+            user_id: 1, 
+            cart_items: cartItems.map(item => ({
+              product_id: item.id,
+              quantity: item.quantity,
+              price: item.price
+            })),
+            phone_number: phoneNumber,
           }),
         });
+
+        //Parsing the JSON response from the server
         const data = await response.json();
-        setTransactionId(data.transactionId);
-        setIsSubmitted(true);
-        setName('');
-        setPhoneNumber('');
+        //checking if the payment initiation was successful
+        if (data.success) {
+          //if successful, update the state with the order ID
+          setTransactionId(data.order_id);
+          //set the form submission state to true
+          setIsSubmitted(true);
+          //clearing form fields
+          setName('');
+          setPhoneNumber('');
+        } else {
+          setError(data.message || 'Failed to initiate payment. Please try again.');
+        }
       } catch (error) {
         console.error('Error initiating payment:', error);
         setError('Failed to initiate payment. Please try again.');
       }
     }
   };
-
+  
   useEffect(() => {
     setIsFormValid(name.trim() !== '' && phoneNumber.trim() !== '');
   }, [name, phoneNumber]);
