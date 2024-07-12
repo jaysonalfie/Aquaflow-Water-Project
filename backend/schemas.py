@@ -39,13 +39,8 @@ class PaymentBase(BaseModel):
     phone_number: str
     status: str = Field(default="pending")
 
-class PaymentCreate(BaseModel):
-    user_id: int
-    amount: float 
-    phone:str 
-
-    class Config:
-        extra ="allow"
+class PaymentCreate(PaymentBase):
+    pass
 
 class Payment(PaymentBase):
     id: int

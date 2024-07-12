@@ -1,7 +1,7 @@
-from sqlalchemy import Boolean, Column, Integer, String, Float, DateTime, ForeignKey
+from sqlalchemy import Boolean, Column, Integer, String, Float, DateTime, ForeignKey # type: ignore
 from database import engine
 from database import Base
-from sqlalchemy.sql import func
+from sqlalchemy.sql import func # type: ignore
 from sqlalchemy.orm import relationship
 
 # Defining model for the tables in the db defining the structures

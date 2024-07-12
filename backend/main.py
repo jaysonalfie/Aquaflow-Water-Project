@@ -282,15 +282,105 @@ async def validation(request: Request):
 
 #Inititiate Mpesa express request
 #/pay?phone=amount
-@app.post('/initiate-payment')
-async def initiate_payment(payment_data: dict):
-    amount = payment_data['amount']
-    phone = payment_data['phone']
+# @app.post('/initiate-payment')
+# async def initiate_payment(payment_data: dict):
+#     amount = payment_data['amount']
+#     phone = payment_data['phone']
 
+#     endpoint = 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest'
+#     headers = {"Authorization": f"Bearer {safaccess_token()}"}
+#     Timestamp = datetime.now()
+#     times = Timestamp.strftime("%Y%m%d%H%M%S")
+#     password = "174379" + "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919" + times
+#     password = base64.b64encode(password.encode('utf-8')).decode('utf-8')
+
+#     data = {
+#         "BusinessShortCode": "174379",
+#         "Password": password,
+#         "Timestamp": times,
+#         "TransactionType": "CustomerPayBillOnline",
+#         "PartyA": phone,
+#         "PartyB": "174379",
+#         "PhoneNumber": phone,
+#         "CallBackURL": base_url,    
+#         "AccountReference": "Aquaflow Water",    
+#         "TransactionDesc": "Test",
+#         "Amount": amount
+#     }
+
+#     res = requests.post(endpoint, json=data, headers=headers)
+#     return res.json()
+
+# # Consume M-PESA express callback
+# @app.post('/lmno-callback')
+# async def mpesa_callback(request: Request):
+#     data = await request.json()
+#     print(data)
+#     return "ok"
+
+
+# #creating orders
+# @app.post("/orders/", response_model=schemas.Order)
+# def create_order(order: schemas.OrderCreate, db:Session = Depends(get_db)):
+#     db_order = models.Order(
+#         user_id=order.user_id,
+#         total_amount = order.total_amount,
+#         status=order.status,
+#     )
+#     db.add(db_order)
+#     db.commit()
+#     db.refresh(db_order)
+
+#     for item in order.items:
+#         db_order_item = models.OrderItem(
+#             order_id =db_order.id,
+#             product_id=item.product_id,
+#             quantity=item.quantity,
+#             price=item.price,
+#         )
+#         db.add(db_order_item)
+#     db.commit()
+
+#     return db_order
+
+#initiating mpesa payment
+@app.post('/initiate-payment', response_model=schemas.CheckoutResponse)
+async def initiate_payment(payment_data: schemas.CheckoutRequest, db: Session = Depends(get_db)):
+    # Create order with the total amount and status
+    order = models.Order(
+        user_id=payment_data.user_id,
+        total_amount=sum(item.price * item.quantity for item in payment_data.cart_items),
+        status="pending"
+    )
+    db.add(order)
+    # This assigns an ID to the order
+    db.flush()  
+
+    # Create order items for each item in the cart
+    for item in payment_data.cart_items:
+        order_item = models.OrderItem(
+            order_id=order.id,
+            product_id=item.product_id,
+            quantity=item.quantity,
+            price=item.price
+        )
+        db.add(order_item)
+
+    # Create payment record associated with the order
+    payment = models.Payment(
+        order_id=order.id,
+        amount=order.total_amount,
+        phone_number=payment_data.phone_number,
+        status="pending"
+    )
+    db.add(payment)
+    db.commit()
+
+    # Initiate M-Pesa payment
     endpoint = 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest'
     headers = {"Authorization": f"Bearer {safaccess_token()}"}
-    Timestamp = datetime.now()
-    times = Timestamp.strftime("%Y%m%d%H%M%S")
+    timestamp = datetime.now()
+    times = timestamp.strftime("%Y%m%d%H%M%S")
     password = "174379" + "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919" + times
     password = base64.b64encode(password.encode('utf-8')).decode('utf-8')
 
@@ -299,47 +389,78 @@ async def initiate_payment(payment_data: dict):
         "Password": password,
         "Timestamp": times,
         "TransactionType": "CustomerPayBillOnline",
-        "PartyA": phone,
+        "PartyA": payment_data.phone_number,
         "PartyB": "174379",
-        "PhoneNumber": phone,
-        "CallBackURL": base_url,    
-        "AccountReference": "Aquaflow Water",    
-        "TransactionDesc": "Test",
-        "Amount": amount
+        "PhoneNumber": payment_data.phone_number,
+        "CallBackURL": f"{base_url}/lmno-callback",    
+        "AccountReference": "Aquaflow water Payment",    
+        "TransactionDesc": "Aquaflow Water Payment",
+        "Amount": int(order.total_amount)
     }
-
+    
+    #sending the payment request to m-pesa
     res = requests.post(endpoint, json=data, headers=headers)
-    return res.json()
+    mpesa_response = res.json()
 
-# Consume M-PESA express callback
-@app.post('/lmno-callback')
-async def mpesa_callback(request: Request):
-    data = await request.json()
-    print(data)
-    return "ok"
-
-
-#creating orders
-@app.post("/orders/", response_model=schemas.Order)
-def create_order(order: schemas.OrderCreate, db:Session = Depends(get_db)):
-    db_order = models.Order(
-        user_id=order.user_id,
-        total_amount = order.total_amount,
-        status=order.status,
+    # Update payment record with M-Pesa response
+    payment.merchant_request_id = mpesa_response.get('MerchantRequestID')
+    payment.checkout_request_id = mpesa_response.get('CheckoutRequestID')
+    db.commit()
+     
+    #returning the response indicating success
+    return schemas.CheckoutResponse(
+        success=True,
+        message="Payment initiated successfully",
+        order_id=order.id
     )
-    db.add(db_order)
-    db.commit()
-    db.refresh(db_order)
 
-    for item in order.items:
-        db_order_item = models.OrderItem(
-            order_id =db_order.id,
-            product_id=item.product_id,
-            quantity=item.quantity,
-            price=item.price,
-        )
-        db.add(db_order_item)
-    db.commit()
 
-    return db_order
+#mpesa callback
+@app.post('/lmno-callback')
+async def mpesa_callback(request: Request, db: Session = Depends(get_db)):
+    #parsing the JSON data from the callback request
+    data = await request.json()
+    
+    # Extract relevant information from the callback data
+    merchant_request_id = data['Body']['stkCallback']['MerchantRequestID']
+    checkout_request_id = data['Body']['stkCallback']['CheckoutRequestID']
+    result_code = data['Body']['stkCallback']['ResultCode']
+    result_desc = data['Body']['stkCallback']['ResultDesc']
 
+    # Find the payment record
+    payment = db.query(models.Payment).filter_by(
+        merchant_request_id=merchant_request_id,
+        checkout_request_id=checkout_request_id
+    ).first()
+
+    if payment:
+        if result_code == 0:
+            # Payment successful, updating payment status and details
+            payment.status = "completed"
+            payment.transaction_code = data['Body']['stkCallback']['CallbackMetadata']['Item'][1]['Value']
+            payment.transaction_description = result_desc
+
+            # Update order status to 'paid'
+            order = payment.order
+            order.status = "paid"
+        else:
+            # Payment failed update payment status and details
+            payment.status = "failed"
+            payment.transaction_description = result_desc
+
+            # Update order status to status 'payment_failed'
+            order = payment.order
+            order.status = "payment_failed"
+
+        db.commit()
+
+    return {"ResultCode": 0, "ResultDesc": "Callback received successfully"}
+
+@app.get('/order/{order_id}', response_model=schemas.Order)
+def get_order(order_id: int, db: Session = Depends(get_db)):
+    #query the database for the order with the given ID
+    order = db.query(models.Order).filter(models.Order.id == order_id).first()
+    if not order:
+        # Raising an error if the order is not found
+        raise HTTPException(status_code=404, detail="Order not found")
+    return order
