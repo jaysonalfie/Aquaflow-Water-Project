@@ -1,4 +1,5 @@
 import { useContext } from 'react'
+import {useNavigate} from 'react-router-dom'
 import './Cart.css'
 import { CartContext } from '../../context/CartContext'
 import PropTypes from 'prop-types'
@@ -6,10 +7,16 @@ import PropTypes from 'prop-types'
 export default function Cart({showModal, toggle}) {
     // accessing the CartContext
     const {cartItems, addToCart, removeFromCart, clearCart, getCartTotal} = useContext(CartContext)
-
+    const navigate = useNavigate()
  
     if (!showModal) {
         return null;
+    }
+
+    //fuction to handle checkout
+    const handleCheckout = () =>{
+        toggle()
+        navigate('/checkout')
     }
 
     // console.log('Cart Items:', cartItems);
@@ -45,7 +52,12 @@ export default function Cart({showModal, toggle}) {
                            <div className='cart-summary'>
                             <p>Total: Ksh {getCartTotal()}</p>
                             <button onClick={clearCart}>Clear Cart</button>
+                            <div className='cart-checkout'>
+                            <button onClick={handleCheckout}>Proceed to checkout</button>
                         </div>
+                            
+                        </div>
+                       
                     </>
                 )}
             </div>

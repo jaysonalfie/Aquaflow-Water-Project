@@ -10,6 +10,7 @@ import ErrorPage from "./ErrorPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./components/AuthContext";
 import DispensorShop from "./Dispensor/DispensorShop";
+import CheckoutPage from "./pages/CheckoutPage";
 
 
 //creating react router for the elements in the application
@@ -18,6 +19,8 @@ const router = createBrowserRouter(
     //creating parent route as main layout will be in every page
     <Route>
     <Route path="/dispensorshop" element={<DispensorShop/>}/>
+    <Route path="/checkout" element={<CheckoutPage/>}/>
+
       <Route path='/' element={<MainLayout/>}>
     <Route index element={<LoginPage/>}/>
     <Route path="/home" element={<ProtectedRoute><HomePage/></ProtectedRoute>} />
