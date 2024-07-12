@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException,status, Form , File , UploadFile
+from fastapi import FastAPI, Depends, HTTPException,status, Form , File , UploadFile, Request
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
@@ -8,12 +8,26 @@ from models import Product, User
 from database import SessionLocal, engine
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 import shutil
 import os
+import json
+from dotenv import load_dotenv
 from fastapi.staticfiles import StaticFiles
+import requests
+from requests.auth import HTTPBasicAuth
+import base64
+import schemas, models
 
 app = FastAPI()
+
+load_dotenv()
+
+
+# Safaricom Api credentials
+consumer_key = os.getenv('CONSUMER_KEY')
+consumer_secret = os.getenv('CONSUMER_SECRET')
+base_url = os.getenv('BASE_URL')
 
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
@@ -53,7 +67,7 @@ def get_db():
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 #creating pydantic models
-#used for data validation
+#used for data validation, serialization 
 class UserCreate(BaseModel):
     email:str
     username:str
@@ -127,15 +141,17 @@ def read_products(skip:int = 0, limit:int = 100, db: Session = Depends(get_db)):
 #endpoint to serve the images
 @app.get("/products/{product_id}/image")
 def get_product_image(product_id: int, db: Session = Depends(get_db)):
+     # Query the product from the database using the provided product_id
     product = db.query(Product).filter(Product.id == product_id).first()
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
     
     if not product.image_path:
         raise HTTPException(status_code =4004, detail ="Image path not found")
-    
+    # Construct the full path to the image file
     full_path = os.path.join(os.getcwd(), product.image_path)
-
+    
+     # If the image file does not exist at the constructed path, raise a 404 error
     if not os.path.exists(full_path):
         raise HTTPException(status_code=404, detail="image file not found")
     
@@ -218,6 +234,112 @@ async def verify_user_token(token:str):
     return {"message": "Token is valid"}
 
 
+#mpesa payment procedure
+#function to generate access_token
+def safaccess_token():
+    mpesa_auth_url = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
+    data = (requests.get(mpesa_auth_url, auth=HTTPBasicAuth(consumer_key, consumer_secret))).json()
+    return data['access_token']
+
+#creating safaricome access token
+@app.get("/mpesa_access_token'")
+def token():
+    data = safaccess_token()
+    return data
+
+#registering urls
+@app.get('/register_urls')
+def register():
+    mpesa_endpoint = "https://sandbox.safaricom.co.ke/mpesa/c2b/v1/registerurl"
+    headers = {"Authorization": f"Bearer {safaccess_token()}"}
+    response_data = requests.post(
+        mpesa_endpoint,
+        json={
+            "ShortCode": "600997",
+            "ResponseType": "Completed",
+            "ConfirmationURL": f"{base_url}/c2b/confirm",
+            "ValidationURL": f"{base_url}/c2b/validation"
+        },
+        headers=headers
+    )
+    return response_data.json()
+
+@app.post('/c2b/confirm')
+async def confirm(request: Request):
+    data = await request.json()
+    with open('confirm.json', 'a') as file:
+        json.dump(data, file)
+        file.write('\n')
+    return JSONResponse(content={"ResultCode": 0, "ResultDesc": "Accepted"}, status_code=200)
+
+@app.post('/c2b/validation')
+async def validation(request: Request):
+    data = await request.json()
+    with open('validation.json', 'a') as file:
+        json.dump(data, file)
+        file.write('\n')
+    return JSONResponse(content={"ResultCode": 0, "ResultDesc": "Accepted"}, status_code=200)
+
+#Inititiate Mpesa express request
+#/pay?phone=amount
+@app.post('/initiate-payment')
+async def initiate_payment(payment_data: dict):
+    amount = payment_data['amount']
+    phone = payment_data['phone']
+
+    endpoint = 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest'
+    headers = {"Authorization": f"Bearer {safaccess_token()}"}
+    Timestamp = datetime.now()
+    times = Timestamp.strftime("%Y%m%d%H%M%S")
+    password = "174379" + "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919" + times
+    password = base64.b64encode(password.encode('utf-8')).decode('utf-8')
+
+    data = {
+        "BusinessShortCode": "174379",
+        "Password": password,
+        "Timestamp": times,
+        "TransactionType": "CustomerPayBillOnline",
+        "PartyA": phone,
+        "PartyB": "174379",
+        "PhoneNumber": phone,
+        "CallBackURL": base_url,    
+        "AccountReference": "Aquaflow Water",    
+        "TransactionDesc": "Test",
+        "Amount": amount
+    }
+
+    res = requests.post(endpoint, json=data, headers=headers)
+    return res.json()
+
+# Consume M-PESA express callback
+@app.post('/lmno-callback')
+async def mpesa_callback(request: Request):
+    data = await request.json()
+    print(data)
+    return "ok"
 
 
+#creating orders
+@app.post("/orders/", response_model=schemas.Order)
+def create_order(order: schemas.OrderCreate, db:Session = Depends(get_db)):
+    db_order = models.Order(
+        user_id=order.user_id,
+        total_amount = order.total_amount,
+        status=order.status,
+    )
+    db.add(db_order)
+    db.commit()
+    db.refresh(db_order)
+
+    for item in order.items:
+        db_order_item = models.OrderItem(
+            order_id =db_order.id,
+            product_id=item.product_id,
+            quantity=item.quantity,
+            price=item.price,
+        )
+        db.add(db_order_item)
+    db.commit()
+
+    return db_order
 
