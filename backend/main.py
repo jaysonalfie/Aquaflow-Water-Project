@@ -18,6 +18,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 import base64
 import schemas, models
+from sqlalchemy import func
 
 app = FastAPI()
 
@@ -464,3 +465,16 @@ def get_order(order_id: int, db: Session = Depends(get_db)):
         # Raising an error if the order is not found
         raise HTTPException(status_code=404, detail="Order not found")
     return order
+
+
+#route to provide order summary to dashboard
+@app.get("/order-summary")
+def get_order_summary(db: Session = Depends(get_db)):
+    total_orders = db.query(func.count(models.Order.id)).scalar()
+    total_revenue = db.query(func.sum(models.Order.total_amount)).scalar() or 0
+
+    return {
+        "total_orders": total_orders,
+        "total_revenue": float(total_revenue)
+    }
+                            
