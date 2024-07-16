@@ -3,9 +3,14 @@ import React from "react";
 import "../components/style.css";
 import waterman1 from "../images/waterman1.jpg";
 import waterman2 from "../images/waterman2.jpg";
+import {useNavigate} from 'react-router-dom'
+
 
 const InfoCard = () => {
-
+ const navigate =useNavigate();
+ const handleNavigation = (path)=>{
+  navigate(path);
+ }
   
   return (
     <div className="wrapper">
@@ -31,7 +36,7 @@ const InfoCard = () => {
               </p>
             </div>
             <div className="bottom">
-              <button className="btn5">Read More</button>
+              <button className="btn5" onClick={()=> handleNavigation('/about')}>Read More</button>
               <span>
                 <i class="bx bx-share-alt"> Share</i>
               </span>
@@ -61,7 +66,7 @@ const InfoCard = () => {
               </p>
             </div>
             <div className="bottom">
-              <button className="btn5">Read More</button>
+              <button className="btn5" onClick={()=> handleNavigation('/about')}>Read More</button>
               <span>
                 <i class="bx bx-share-alt"> Share</i>
               </span>

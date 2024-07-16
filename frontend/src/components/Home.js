@@ -7,10 +7,17 @@ import WaterCard from "./WaterCard";
 import ServiceCard from "./ServiceCard";
 import waterb1 from "../images/waterb1.jpg";
 import InfoCard from "./InfoCard";
+import {useNavigate} from 'react-router-dom'
 
 
 
 const Home = (props) => {
+
+  const navigate = useNavigate();
+  const handleNavigation =(path) => {
+    navigate(path);
+
+  };
   return (
     <div className="container">
       <section className="section1">
@@ -22,8 +29,8 @@ const Home = (props) => {
             Water is just not a resource.It's the essence of life itself. Join
             as we delve into the depths of this vital element
           </p>
-          <button className="btn">Our services</button>
-          <button className="btn2">discover</button>
+          <button className="btn" onClick={()=>handleNavigation('/services')}>Our services</button>
+          <button className="btn2" onClick={()=>handleNavigation('/shop')}>discover</button>
         </article>
         <img src={deliveryman} className="deliveryman" />
       </section>
@@ -40,7 +47,7 @@ const Home = (props) => {
             Together, let's make waves and champion this precious resource for a
             brighter, more sustainable future
           </p>
-          <button className="btn3">Read more</button>
+          <button className="btn3" onClick={() => handleNavigation('/about')}>Read more</button>
         </article>
 
         <article className="watersec">

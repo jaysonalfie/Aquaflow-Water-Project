@@ -11,7 +11,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./components/AuthContext";
 import DispensorShop from "./Dispensor/DispensorShop";
 import CheckoutPage from "./pages/CheckoutPage";
-
+import ServicesPage from "./pages/ServicesPage";
+import BlogsPage from "./pages/BlogsPage";
 
 //creating react router for the elements in the application
 const router = createBrowserRouter(
@@ -27,6 +28,8 @@ const router = createBrowserRouter(
     <Route path="/about" element={<ProtectedRoute><AboutPage/></ProtectedRoute>}/>
     <Route path="/shop" element={<ProtectedRoute><ShopsPage/></ProtectedRoute>}/>
     <Route path="/shop" element={<ProtectedRoute><ShopsPage/></ProtectedRoute>}/>
+    <Route path="/services" element={<ProtectedRoute><ServicesPage/></ProtectedRoute>}/>
+    <Route path="/blogs" element={<ProtectedRoute><BlogsPage/></ProtectedRoute>}/>
     
    
     <Route path="/signup" element={<SignupPage/>}/>
