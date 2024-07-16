@@ -1,14 +1,40 @@
-import React, { useState , useCallback } from "react";
+import React, { useState , useCallback ,useEffect} from "react";
 import './MainContainer.css'
 import { BsFillArchiveFill, BsCashStack, BsWallet2 } from "react-icons/bs";
 
 
 const MainContainer = () => {
 
+
+
  //initialize state to handle form inputs and selected image
     const [inputValue, setInputValue] = useState('')
     const [selectedImage, setSelectedImage]= useState('')
     const [inputName, setInputName] = useState('')
+
+  //states dealing with retrieving orders
+  const [orders, setOrders] = useState(0);
+  const [ revenue, setRevenue] =useState(0);
+
+  //function to fetch the order data
+  const fetchOrderData = useCallback(async ()=>{
+    try{
+      const response = await fetch('http://localhost:8000/order-summary');
+      if (!response.ok){
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      setOrders(data.total_orders);
+      setRevenue(data.total_revenue);
+    } catch (error){
+      console.error('Error fetching order data:', error)
+    }
+  }, []);
+
+  //hook to fetchOrderDate when component mounts
+  useEffect(()=>{
+    fetchOrderData();
+  },[fetchOrderData])
 
     //function to handle input name change
     const handleNameChange = (event) =>{
@@ -83,21 +109,21 @@ const MainContainer = () => {
             <h3>ORDERS</h3>
             <BsFillArchiveFill className="card_icon" />
           </div>
-          <h1>20</h1>
+          <h1>{orders}</h1>
         </div>
         <div className="main-card">
           <div className="card-inner">
             <h3>REVENUE</h3>
             <BsCashStack className="card_icon" />
           </div>
-          <h1>20</h1>
+          <h1>Ksh{revenue.toFixed(2)}</h1>
         </div>
         <div className="main-card">
           <div className="card-inner">
             <h3>TOTAL</h3>
             <BsWallet2 className="card_icon" />
           </div>
-          <h1>20</h1>
+          <h1>{orders}</h1>
         </div>
       </div>
       <div className="mainContainerBottom">

@@ -1,3 +1,4 @@
+//signup.js
 import React, { useState } from "react";
 import logo from "../../images/logo2.GIF";
 import { NavLink } from "react-router-dom";
